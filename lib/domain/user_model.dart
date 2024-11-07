@@ -16,6 +16,3 @@ class UserModel {
       required this.userAddress});
 }
 
-String globalUserId = '';
-String globalusername = '';
-List<MusicModel> MusicList = [];

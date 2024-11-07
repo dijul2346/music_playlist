@@ -1,8 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:music_playlist/core.dart';
 import 'package:music_playlist/domain/database.dart';
 import 'package:music_playlist/domain/library_model.dart';
-import 'package:music_playlist/domain/user_model.dart';
 
 class ScreenMusicLibrary extends StatefulWidget {
   const ScreenMusicLibrary({super.key});
@@ -15,29 +14,19 @@ class _ScreenMusicLibraryState extends State<ScreenMusicLibrary> {
   final musicNameController = TextEditingController();
   final artistNameController = TextEditingController();
 
-  List<MusicModel> globalMusicList = [];
+  List<MusicModel> musicModelList = [
+    // MusicModel(musicId: '1', musicName: 'Dilsere', musicArtist: 'A.R. Rahman'),
+    // MusicModel(
+    //     musicId: '2',
+    //     musicName: 'Taal Se Taal Mila',
+    //     musicArtist: 'Sukhwinder Sing'),
+    // MusicModel(
+    //     musicId: '3',
+    //     musicName: 'Yun Hi Chala Chal',
+    //     musicArtist: 'Javeed Akthar'),
+  ];
+
   int id = 0;
-
-  @override
-
-  // Future<void> loadDatabase() async {
-  //   try {
-  //     QuerySnapshot<Map<String, dynamic>> querySnapshot =
-  //         await FirebaseFirestore.instance.collection('music').get();
-
-  //     // Clear the existing list to prevent duplication
-  //     globalMusicList.clear();
-
-  //     // Map Firestore documents to MusicModel instances
-  //     for (var doc in querySnapshot.docs) {
-  //       MusicModel music = MusicModel(
-  //         musicId: doc['musicId'],
-  //         musicName: doc['musicName'],
-  //         musicArtist: doc['musicArtist'],
-  //       );
-  //       globalMusicList.add(music);
-  //     }
-
   @override
   Widget build(BuildContext context) {
     loadUserName();
@@ -73,11 +62,13 @@ class _ScreenMusicLibraryState extends State<ScreenMusicLibrary> {
                         ),
                         ElevatedButton(
                             onPressed: () {
-                              MusicModel t = MusicModel(
-                                  musicId: '1',
+                              id++;
+                              MusicModel m = MusicModel(
+                                  musicId: id.toString(),
                                   musicName: musicNameController.text,
                                   musicArtist: artistNameController.text);
-                              addTask(t);
+                              addMusic(m);
+                              loadUserName();
                             },
                             child: const Text('Add'))
                       ],
@@ -117,19 +108,21 @@ class _ScreenMusicLibraryState extends State<ScreenMusicLibrary> {
                         },
                         leading: Text((index + 1).toString()),
                         title: Text(
-                          globalMusicList[index].musicName,
+                          musicModelList[index].musicName,
                           style: const TextStyle(
                               fontSize: 23, color: Colors.purple),
                         ),
                         subtitle: Row(
                           children: [
-                            Text(globalMusicList[index].musicArtist,
+                            Text(musicModelList[index].musicArtist,
                                 style: const TextStyle(
                                     fontSize: 19, color: Colors.pink)),
                             const Spacer(),
                             IconButton(
                                 onPressed: () {
-                                  //Write the code to delete .....
+                                  deleteMusic("Illuminati ");
+                                  //print(musicModelList[index].musicId);
+                                  loadUserName();
                                 },
                                 icon: const Icon(Icons.delete))
                           ],
@@ -138,7 +131,7 @@ class _ScreenMusicLibraryState extends State<ScreenMusicLibrary> {
                   separatorBuilder: (context, index) {
                     return Divider();
                   },
-                  itemCount: globalMusicList.length,
+                  itemCount: musicModelList.length,
                 ))
           ],
         ),
@@ -147,9 +140,11 @@ class _ScreenMusicLibraryState extends State<ScreenMusicLibrary> {
   }
 
   Future<void> loadUserName() async {
+    globalusername = await getUserName(globalUserId);
     await loadDatabase();
     setState(() {
-      MusicList = globalMusicList;
+      musicModelList = GlobalMusicList;
+      id = int.parse(gid);
     });
   }
 }
