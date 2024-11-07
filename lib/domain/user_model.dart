@@ -1,3 +1,5 @@
+import 'package:music_playlist/domain/library_model.dart';
+
 class UserModel {
   late String userId;
   late String userName;
@@ -13,3 +15,7 @@ class UserModel {
       required this.userMobile,
       required this.userAddress});
 }
+
+String globalUserId = '';
+String globalusername = '';
+List<MusicModel> globalMusicList = [];

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:music_playlist/domain/database.dart';
+import 'package:music_playlist/domain/user_model.dart';
+import 'package:music_playlist/presentation/login_screen.dart';
 
 class ScreenSignup extends StatefulWidget {
   const ScreenSignup({super.key});
@@ -148,25 +151,60 @@ class _ScreenSignupState extends State<ScreenSignup> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(top: 20),
-                child: ElevatedButton(
-                  onPressed: () async {
-                    if (_formKey.currentState!.validate()) {
-                      //write the code for user registration
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.purple, // Purple background
-                    minimumSize: Size(MediaQuery.of(context).size.width * .7,
-                        50), // Stretched button
-                  ),
-                  child: const Text(
-                    'Register',
-                    style: TextStyle(
-                        color: Colors.white, fontSize: 22), // White text
-                  ),
-                ),
-              ),
+  padding: const EdgeInsets.only(top: 20),
+  child: ElevatedButton(
+    onPressed: () async {
+      if (_formKey.currentState!.validate()) {
+        UserModel user = UserModel(
+          userAddress: addressController.text,
+          userName: nameController.text,
+          userEmail: emailController.text,
+          userPassword: passwordController.text,
+          userMobile: mobileController.text,
+          userId: '1',
+        );
+
+        try {
+          // Attempt to register the user
+          await registerUser(user);
+
+          // Show success message
+          final successSnackBar = SnackBar(
+            content: const Text('Registration successful!'),
+            action: SnackBarAction(
+              label: 'Go to Login',
+              onPressed: () {
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (context) => const ScreenLogin()),
+                );
+              },
+            ),
+          );
+          ScaffoldMessenger.of(context).showSnackBar(successSnackBar);
+        } catch (e) {
+          // Show failure message if an error occurs
+          final failureSnackBar = SnackBar(
+            content: Text('Registration failed: $e'),
+            action: SnackBarAction(
+              label: 'Try Again',
+              onPressed: () {},
+            ),
+          );
+          ScaffoldMessenger.of(context).showSnackBar(failureSnackBar);
+        }
+      }
+    },
+    style: ElevatedButton.styleFrom(
+      backgroundColor: Colors.purple, // Purple background
+      minimumSize: Size(MediaQuery.of(context).size.width * .7, 50), // Button width
+    ),
+    child: const Text(
+      'Register',
+      style: TextStyle(color: Colors.white, fontSize: 22), // White text
+    ),
+  ),
+)
+,
             ],
           ),
         ),

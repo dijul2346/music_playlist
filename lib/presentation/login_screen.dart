@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:music_playlist/domain/database.dart';
+import 'package:music_playlist/domain/user_model.dart';
 import 'package:music_playlist/presentation/panel/music_home.dart';
 import 'package:music_playlist/presentation/registration/signup_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
 
 class ScreenLogin extends StatefulWidget {
   const ScreenLogin({super.key});
@@ -86,9 +90,33 @@ class _ScreenLoginState extends State<ScreenLogin> {
                         child: ElevatedButton(
                           onPressed: () async {
                             if (_formKey.currentState!.validate()) {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) =>
-                                      const ScreenMusicLibrary()));
+                              UserModel user = UserModel(
+                                  userId: '1',
+                                  userName: '1',
+                                  userEmail: emailController.text,
+                                  userPassword: passwordController.text,
+                                  userMobile: '1',
+                                  userAddress: '1');
+                              if (await checkLogin(user)) {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) =>
+                                        const  ScreenMusicLibrary()));
+                              } else {
+                                final snackBar = SnackBar(
+                                  content: const Text('Login failed.'),
+                                  action: SnackBarAction(
+                                    label: 'Ok',
+                                    onPressed: () {
+                                      Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const ScreenLogin()));
+                                    },
+                                  ),
+                                );
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(snackBar);
+                              }
                             }
                           },
                           style: ElevatedButton.styleFrom(

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:music_playlist/domain/database.dart';
 import 'package:music_playlist/domain/library_model.dart';
+import 'package:music_playlist/domain/user_model.dart';
 
 class ScreenMusicLibrary extends StatefulWidget {
   const ScreenMusicLibrary({super.key});
@@ -12,19 +14,15 @@ class _ScreenMusicLibraryState extends State<ScreenMusicLibrary> {
   final musicNameController = TextEditingController();
   final artistNameController = TextEditingController();
 
-  List<MusicModel> musicModelList = [
-    MusicModel(musicId: '1', musicName: 'Dilsere', musicArtist: 'A.R. Rahman'),
-    MusicModel(
-        musicId: '2',
-        musicName: 'Taal Se Taal Mila',
-        musicArtist: 'Sukhwinder Sing'),
-    MusicModel(
-        musicId: '3',
-        musicName: 'Yun Hi Chala Chal',
-        musicArtist: 'Javeed Akthar'),
-  ];
+  List<MusicModel> globalMusicList = [];
   int id = 0;
+
   @override
+  void initState() {
+    super.initState();
+    loadDatabase();
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -58,7 +56,11 @@ class _ScreenMusicLibraryState extends State<ScreenMusicLibrary> {
                         ),
                         ElevatedButton(
                             onPressed: () {
-                              // Write the code to add the .....
+                              MusicModel t = MusicModel(
+                                  musicId: '1',
+                                  musicName: musicNameController.text,
+                                  musicArtist: artistNameController.text);
+                              addTask(t);
                             },
                             child: const Text('Add'))
                       ],
@@ -98,13 +100,13 @@ class _ScreenMusicLibraryState extends State<ScreenMusicLibrary> {
                         },
                         leading: Text((index + 1).toString()),
                         title: Text(
-                          musicModelList[index].musicName,
+                          globalMusicList[index].musicName,
                           style: const TextStyle(
                               fontSize: 23, color: Colors.purple),
                         ),
                         subtitle: Row(
                           children: [
-                            Text(musicModelList[index].musicArtist,
+                            Text(globalMusicList[index].musicArtist,
                                 style: const TextStyle(
                                     fontSize: 19, color: Colors.pink)),
                             const Spacer(),
@@ -119,7 +121,7 @@ class _ScreenMusicLibraryState extends State<ScreenMusicLibrary> {
                   separatorBuilder: (context, index) {
                     return Divider();
                   },
-                  itemCount: musicModelList.length,
+                  itemCount: globalMusicList.length,
                 ))
           ],
         ),
