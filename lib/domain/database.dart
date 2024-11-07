@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:music_playlist/domain/library_model.dart';
 import 'package:music_playlist/domain/user_model.dart';
+import 'package:music_playlist/presentation/panel/music_home.dart';
 
 Future<bool> checkLogin(UserModel user) async {
   bool flag = false;
@@ -42,21 +43,22 @@ Future<void> addUser(String userId, UserModel user) async {
 Future<void> loadDatabase() async {
   final firebaseFirestore = FirebaseFirestore.instance
       .collection('music')
+      .where('userId', isEqualTo: globalUserId)
       .get()
       .then((querySnapshot) {
-    globalMusicList.clear();
+    MusicList.clear();
     for (var doc in querySnapshot.docs) {
       MusicModel t = MusicModel(
           musicId: doc['musicId'],
           musicName: doc['musicName'],
           musicArtist: doc['musicArtist']);
-      globalMusicList.add(t);
+      MusicList.add(t);
     }
   });
-}
+} 
 
 Future<void> addTask(MusicModel t) async {
-  await FirebaseFirestore.instance.collection('tasks').add({
+  await FirebaseFirestore.instance.collection('music').add({
     'musicId': t.musicId,
     'musicName': t.musicName,
     'musicArtist': t.musicArtist

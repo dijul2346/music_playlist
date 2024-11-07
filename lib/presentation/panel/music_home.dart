@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:music_playlist/domain/database.dart';
 import 'package:music_playlist/domain/library_model.dart';
@@ -18,12 +19,28 @@ class _ScreenMusicLibraryState extends State<ScreenMusicLibrary> {
   int id = 0;
 
   @override
-  void initState() {
-    super.initState();
-    loadDatabase();
-  }
 
+  // Future<void> loadDatabase() async {
+  //   try {
+  //     QuerySnapshot<Map<String, dynamic>> querySnapshot =
+  //         await FirebaseFirestore.instance.collection('music').get();
+
+  //     // Clear the existing list to prevent duplication
+  //     globalMusicList.clear();
+
+  //     // Map Firestore documents to MusicModel instances
+  //     for (var doc in querySnapshot.docs) {
+  //       MusicModel music = MusicModel(
+  //         musicId: doc['musicId'],
+  //         musicName: doc['musicName'],
+  //         musicArtist: doc['musicArtist'],
+  //       );
+  //       globalMusicList.add(music);
+  //     }
+
+  @override
   Widget build(BuildContext context) {
+    loadUserName();
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -127,5 +144,12 @@ class _ScreenMusicLibraryState extends State<ScreenMusicLibrary> {
         ),
       ),
     );
+  }
+
+  Future<void> loadUserName() async {
+    await loadDatabase();
+    setState(() {
+      MusicList = globalMusicList;
+    });
   }
 }

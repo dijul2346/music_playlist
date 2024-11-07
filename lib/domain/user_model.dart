@@ -18,4 +18,4 @@ class UserModel {
 
 String globalUserId = '';
 String globalusername = '';
-List<MusicModel> globalMusicList = [];
+List<MusicModel> MusicList = [];
